@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <meta name="description" content="Generate AI images effortlessly with customizable options and history.">
+    <title>AI Image Generator</title>
+    <style>
+    :root {
+      --primary-color: #7f00ff;
+      --secondary-color: #e100ff;
+      --background-color: #f0f4f8;
+      --card-background: #ffffff;
+      --text-color: #333333;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .container {
+      background-color: var(--card-background);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 2rem;
+      max-width: 600px;
+      width: 100%;
+    }
+    h1 {
+      margin-bottom: 1rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    label {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+    input[type="text"], select {
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      transition: border-color 0.3s;
+      margin-top: 0.25rem;
+    }
+    input[type="text"]:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+    button {
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--primary-color);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background: var(--secondary-color);
+      transform: translateY(-2px);
+    }
+    #spinner {
+      margin-top: 1rem;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+    }
+    .result {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .result img {
+      max-width: 100%;
+      border-radius: 12px;
+      transition: transform 0.3s;
+    }
+    .result img:hover {
+      transform: scale(1.05);
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .thumb {
+      background-color: var(--background-color);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      text-align: center;
+      padding: 0.5rem;
+    }
+    .thumb img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .thumb p {
+      margin: 0.5rem 0 0.25rem;
+      font-size: 0.875rem;
+      color: var(--text-color);
+    }
+    .thumb a {
+      font-size: 0.75rem;
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    .thumb a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.5rem; }
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Image Generator</h1>
+        <form action="/generate" method="post">
+            <label for="prompt">Prompt:</label>
+            <input type="text" id="prompt" name="prompt" required>
+            <label for="model">Model:</label>
+            <select id="model" name="model">
+                <option value="flux">Flux</option>
+                <option value="other">Other</option>
+            </select>
+            <label for="size">Size:</label>
+            <input type="text" id="size" name="size" required>
+            <button type="submit">Generate</button>
+        </form>
+        <div id="spinner">Loading...</div>
+        <div class="result">
+            {% if image_url %}
+                <img src="{{ image_url }}" alt="Generated Image">
+            {% endif %}
+        </div>
+        <div class="gallery">
+            {% for item in history %}
+                <div class="thumb">
+                    <img src="{{ item.url }}" alt="Generated Image">
+                    <p>Prompt: {{ item.prompt }}</p>
+                    <a href="{{ item.url }}" target="_blank">View Image</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
